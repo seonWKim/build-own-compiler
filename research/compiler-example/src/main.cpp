@@ -1,3 +1,5 @@
+#include <string>
+
 enum Token {
     tok_eof = -1,
 
@@ -31,7 +33,7 @@ static int gettok() {
                 return tok_extern;
             }
 
-
+            return tok_identifier; // return tok_identifier if it's not "def" or "extern"
         }
 
         if (isdigit(LastChar) || LastChar == '.') {
@@ -62,4 +64,5 @@ static int gettok() {
         int ThisChar = LastChar;
         LastChar = getchar();
         return ThisChar;
+    }
 }
