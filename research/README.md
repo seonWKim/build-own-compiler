@@ -20,6 +20,5 @@
     - easy to invent your own langauge using LLVM as an optimizer and code generator 
   - Clang 
     - LLVM native C/C++/Objective-C compiler
-  - LLLDB 
+  - LLDB 
     - native debugger for LLVM
-  
