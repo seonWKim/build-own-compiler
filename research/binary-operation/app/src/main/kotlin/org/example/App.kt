@@ -3,16 +3,7 @@
  */
 package org.example
 
-import java.util.LinkedList
-
-class Calculator {
-
-    fun calculateExpression(expression: String): Int {
-        return 0
-    }
-
-
-}
+import java.util.*
 
 enum class TokenType(val priority: Int) {
     NUMBER(-1),
@@ -61,10 +52,6 @@ fun parse(str: String): List<Token> {
     return result
 }
 
-data class TokenHolder(
-    val tokens: LinkedList<Token>
-)
-
 fun eval(tokens: List<Token>): Int {
     return eval(tokens.toCollection(LinkedList()))
 }
@@ -75,7 +62,6 @@ fun eval(tokens: LinkedList<Token>): Int {
     }
 
     val bucket = LinkedList<Token>()
-    var i = 0
 
     while (tokens.isNotEmpty()) {
         val token = tokens.poll()
@@ -96,57 +82,47 @@ fun eval(tokens: LinkedList<Token>): Int {
                     continue
                 }
 
-                bucket.pollLast() // remove last operator
                 when (lastOperator.type) {
-                    TokenType.PLUS -> {
+                    TokenType.PLUS, TokenType.MINUS, TokenType.MUL, TokenType.DIV -> {
+                        bucket.pollLast() // remove last operator
                         val lastNumber = bucket.pollLast()
-                        val calculatedResult = Token(
-                            type = TokenType.NUMBER,
-                            value = (lastNumber.value.toInt() + token.value.toInt()).toString()
-                        )
-                        bucket.add(calculatedResult)
+                        val calculatedResult = when (lastOperator.type) {
+                            TokenType.PLUS -> (lastNumber.value.toInt() + token.value.toInt())
+                            TokenType.MINUS -> (lastNumber.value.toInt() - token.value.toInt())
+                            TokenType.MUL -> (lastNumber.value.toInt() * token.value.toInt())
+                            TokenType.DIV -> (lastNumber.value.toInt() / token.value.toInt())
+                            else -> throw IllegalArgumentException("Invalid operator")
+                        }
+                        val resultToken = Token(TokenType.NUMBER, calculatedResult.toString())
+                        bucket.add(resultToken)
                     }
 
-                    TokenType.MINUS -> {
-                        val lastNumber = bucket.pollLast()
-                        val calculatedResult = Token(
-                            type = TokenType.NUMBER,
-                            value = (lastNumber.value.toInt() - token.value.toInt()).toString()
-                        )
-                        bucket.add(calculatedResult)
-                    }
-
-                    TokenType.MUL -> {
-                        val lastNumber = bucket.pollLast()
-                        val calculatedResult = Token(
-                            type = TokenType.NUMBER,
-                            value = (lastNumber.value.toInt() * token.value.toInt()).toString()
-                        )
-                        bucket.add(calculatedResult)
-                    }
-
-                    TokenType.DIV -> {
-                        val lastNumber = bucket.pollLast()
-                        val calculatedResult = Token(
-                            type = TokenType.NUMBER,
-                            value = (lastNumber.value.toInt() / token.value.toInt()).toString()
-                        )
-                        bucket.add(calculatedResult)
+                    TokenType.PARENTHESES_OPEN -> {
+                        bucket.add(token)
                     }
 
                     else -> {
-
+                        // do nothing
                     }
                 }
             }
 
-            TokenType.PLUS, TokenType.MINUS, TokenType.MUL, TokenType.DIV -> {
+            TokenType.PLUS, TokenType.MINUS, TokenType.MUL, TokenType.DIV, TokenType.PARENTHESES_OPEN -> {
                 bucket.add(token)
             }
 
-
-            else -> {
-
+            TokenType.PARENTHESES_CLOSE -> {
+                val bucketUntilOpenParentheses = LinkedList<Token>()
+                while (bucket.isNotEmpty()) {
+                    val last = bucket.pollLast()
+                    if (last.type == TokenType.PARENTHESES_OPEN) {
+                        break
+                    }
+                    bucketUntilOpenParentheses.addFirst(last)
+                }
+                val result = eval(bucketUntilOpenParentheses)
+                val resultToken = Token(TokenType.NUMBER, result.toString())
+                tokens.addFirst(resultToken)
             }
         }
     }
