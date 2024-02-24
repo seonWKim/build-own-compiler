@@ -7,3 +7,6 @@ $ cmake .
 
 $ make 
 ```
+
+# Progress 
+- https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/LangImpl02.html
