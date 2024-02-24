@@ -66,24 +66,24 @@ data class TokenHolder(
 )
 
 fun eval(tokens: List<Token>): Int {
-    return eval(TokenHolder(tokens.toCollection(LinkedList())))
+    return eval(tokens.toCollection(LinkedList()))
 }
 
-fun eval(tokenHolder: TokenHolder): Int {
-    if (tokenHolder.tokens.isEmpty()) {
+fun eval(tokens: LinkedList<Token>): Int {
+    if (tokens.isEmpty()) {
         throw IllegalArgumentException("Empty tokens")
     }
 
     val bucket = LinkedList<Token>()
     var i = 0
 
-    while (tokenHolder.tokens.isNotEmpty()) {
-        val token = tokenHolder.tokens.poll()
+    while (tokens.isNotEmpty()) {
+        val token = tokens.poll()
 
         // 5 + 5
         when (token.type) {
             TokenType.NUMBER -> {
-                val nextOperator = tokenHolder.tokens.peek()
+                val nextOperator = tokens.peek()
                 val lastOperator = bucket.peekLast()
 
                 if (lastOperator == null) {
@@ -91,10 +91,15 @@ fun eval(tokenHolder: TokenHolder): Int {
                     continue
                 }
 
+                if (nextOperator != null && nextOperator.type.priority > lastOperator.type.priority) {
+                    bucket.add(token)
+                    continue
+                }
+
                 bucket.pollLast() // remove last operator
                 when (lastOperator.type) {
                     TokenType.PLUS -> {
-                        val lastNumber = bucket.pop()
+                        val lastNumber = bucket.pollLast()
                         val calculatedResult = Token(
                             type = TokenType.NUMBER,
                             value = (lastNumber.value.toInt() + token.value.toInt()).toString()
@@ -103,7 +108,7 @@ fun eval(tokenHolder: TokenHolder): Int {
                     }
 
                     TokenType.MINUS -> {
-                        val lastNumber = bucket.pop()
+                        val lastNumber = bucket.pollLast()
                         val calculatedResult = Token(
                             type = TokenType.NUMBER,
                             value = (lastNumber.value.toInt() - token.value.toInt()).toString()
@@ -112,7 +117,7 @@ fun eval(tokenHolder: TokenHolder): Int {
                     }
 
                     TokenType.MUL -> {
-                        val lastNumber = bucket.pop()
+                        val lastNumber = bucket.pollLast()
                         val calculatedResult = Token(
                             type = TokenType.NUMBER,
                             value = (lastNumber.value.toInt() * token.value.toInt()).toString()
@@ -121,7 +126,7 @@ fun eval(tokenHolder: TokenHolder): Int {
                     }
 
                     TokenType.DIV -> {
-                        val lastNumber = bucket.pop()
+                        val lastNumber = bucket.pollLast()
                         val calculatedResult = Token(
                             type = TokenType.NUMBER,
                             value = (lastNumber.value.toInt() / token.value.toInt()).toString()
@@ -146,5 +151,9 @@ fun eval(tokenHolder: TokenHolder): Int {
         }
     }
 
-    return bucket.last.value.toInt()
+    if (bucket.size == 1) {
+        return bucket.last.value.toInt()
+    } else {
+        return eval(bucket)
+    }
 }

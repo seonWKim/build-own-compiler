@@ -50,7 +50,7 @@ class ParsingTest {
     }
 
     @Test
-    fun test_eval() {
+    fun test_basic_eval() {
         val tokens1 = listOf(
             Token(TokenType.NUMBER, "1"),
             Token(TokenType.PLUS, "+"),
@@ -78,5 +78,96 @@ class ParsingTest {
             Token(TokenType.NUMBER, "2"),
         )
         assertEquals(5, eval(tokens4))
+    }
+
+    @Test
+    fun test_eval_different_priority() {
+        val tokens1 = listOf(
+            Token(TokenType.NUMBER, "2"),
+            Token(TokenType.PLUS, "+"),
+            Token(TokenType.NUMBER, "3"),
+            Token(TokenType.MUL, "*"),
+            Token(TokenType.NUMBER, "4"),
+        )
+        assertEquals(14, eval(tokens1))
+
+        val tokens2 = listOf(
+            Token(TokenType.NUMBER, "2"),
+            Token(TokenType.MUL, "*"),
+            Token(TokenType.NUMBER, "3"),
+            Token(TokenType.PLUS, "+"),
+            Token(TokenType.NUMBER, "4"),
+        )
+        assertEquals(10, eval(tokens2))
+
+        val tokens3 = listOf(
+            Token(TokenType.NUMBER, "2"),
+            Token(TokenType.MUL, "*"),
+            Token(TokenType.NUMBER, "3"),
+            Token(TokenType.PLUS, "+"),
+            Token(TokenType.NUMBER, "4"),
+            Token(TokenType.MUL, "*"),
+            Token(TokenType.NUMBER, "5"),
+        )
+        assertEquals(26, eval(tokens3))
+
+        val tokens4 = listOf(
+            Token(TokenType.NUMBER, "3"),
+            Token(TokenType.PLUS, "+"),
+            Token(TokenType.NUMBER, "10"),
+            Token(TokenType.DIV, "/"),
+            Token(TokenType.NUMBER, "2"),
+        )
+        assertEquals(8, eval(tokens4))
+
+        val tokens5 = listOf(
+            Token(TokenType.NUMBER, "3"),
+            Token(TokenType.MUL, "*"),
+            Token(TokenType.NUMBER, "10"),
+            Token(TokenType.DIV, "/"),
+            Token(TokenType.NUMBER, "5")
+        )
+        assertEquals(6, eval(tokens5))
+    }
+
+    @Test
+    fun test_eval_with_parentheses() {
+        // (1 + 2) * 3 
+//        val tokens1 = listOf(
+//            Token(TokenType.PARENTHESES_OPEN, "("),
+//            Token(TokenType.NUMBER, "1"),
+//            Token(TokenType.PLUS, "+"),
+//            Token(TokenType.NUMBER, "2"),
+//            Token(TokenType.PARENTHESES_CLOSE, ")"),
+//            Token(TokenType.MUL, "*"),
+//            Token(TokenType.NUMBER, "3"),
+//        )
+//        assertEquals(9, eval(tokens1))
+
+//        val tokens2 = listOf(
+//            Token(TokenType.NUMBER, "1"),
+//            Token(TokenType.PLUS, "+"),
+//            Token(TokenType.PARENTHESES_OPEN, "("),
+//            Token(TokenType.NUMBER, "2"),
+//            Token(TokenType.PLUS, "+"),
+//            Token(TokenType.NUMBER, "3"),
+//            Token(TokenType.PARENTHESES_CLOSE, ")"),
+//        )
+//        assertEquals(6, eval(tokens2))
+//
+//        val tokens3 = listOf(
+//            Token(TokenType.PARENTHESES_OPEN, "("),
+//            Token(TokenType.NUMBER, "1"),
+//            Token(TokenType.PLUS, "+"),
+//            Token(TokenType.NUMBER, "2"),
+//            Token(TokenType.PARENTHESES_CLOSE, ")"),
+//            Token(TokenType.MUL, "*"),
+//            Token(TokenType.PARENTHESES_OPEN, "("),
+//            Token(TokenType.NUMBER, "3"),
+//            Token(TokenType.PLUS, "+"),
+//            Token(TokenType.NUMBER, "4"),
+//            Token(TokenType.PARENTHESES_CLOSE, ")"),
+//        )
+//        assertEquals(21, eval(tokens3))
     }
 }
