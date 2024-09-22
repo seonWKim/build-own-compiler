@@ -4,7 +4,13 @@
 #include "common.h"
 #include "value.h"
 
+/**
+ * Opcodes
+ *
+ * - Opcodes has operands, and each opcodes relates to the instruction format
+ */
 typedef enum {
+    OP_CONSTANT,
     OP_RETURN
 } OpCode;
 
