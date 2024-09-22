@@ -10,24 +10,22 @@ int main(int argc, const char* argv[]) {
     Chunk chunk;
     initChunk(&chunk);
 
-    int constant = addConstant(&chunk, 1.2);
-    writeChunk(&chunk, OP_CONSTANT, 123);
-    writeChunk(&chunk, constant, 123);
+#define WRITE_CONSTANT(chunk, value, line1, line2) \
+    writeChunk(&chunk, OP_CONSTANT, line1);    \
+    writeChunk(&chunk, addConstant(&chunk, value), line2);
 
-    int c1 = addConstant(&chunk, 1.3);
-    int c2 = addConstant(&chunk, 1.4);
-    int c3 = addConstant(&chunk, 1.5);
-    writeChunk(&chunk, OP_CONSTANT_LONG, 124);
-    writeChunk(&chunk, c1, 124);
-    writeChunk(&chunk, c2, 124);
-    writeChunk(&chunk, c3, 124);
+    WRITE_CONSTANT(chunk, 1, 123, 123);
+    WRITE_CONSTANT(chunk, 2, 124, 124);
+    writeChunk(&chunk, OP_NEGATE, 124);
 
-    writeChunk(&chunk, OP_RETURN, 125);
+    WRITE_CONSTANT(chunk, 3, 125, 125);
+    WRITE_CONSTANT(chunk, 4, 126, 126);
+    writeChunk(&chunk, OP_ADD, 127);
 
+    writeChunk(&chunk, OP_RETURN, 126);
     interpret(&chunk);
 
     freeVM();
     freeChunk(&chunk);
     return 0;
 }
-

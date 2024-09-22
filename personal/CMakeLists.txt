@@ -4,4 +4,5 @@ project(clox)
 # Gather all .c and .h files in the current directory
 file(GLOB SOURCES "*.c" "*.h")
 
-add_executable(clox ${SOURCES})
+add_executable(clox ${SOURCES}
+        vm.c)
