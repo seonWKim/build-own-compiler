@@ -1,14 +1,18 @@
 #include "common.h"
 #include "vm.h"
 #include "debug.h"
+
 VM vm;
 
-void initVM() {
+void resetStack() {
+    vm.stackTop = vm.stack;
+}
 
+void initVM() {
+    resetStack();
 }
 
 void freeVM() {
-
 }
 
 static InterpretResult run() {
@@ -16,21 +20,31 @@ static InterpretResult run() {
 #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
     for (;;) {
 #ifdef DEBUG_TRACE_EXECUTION
+        printf("            ");
+        for (Value* slot = vm.stack; slot < vm.stackTop; slot++) {
+            printf("[ ");
+            printValue(*slot);
+            printf(" ]");
+        }
+        printf("\n");
+
         disassembleInstruction(vm.chunk, (int) (vm.ip - vm.chunk->code));
 #endif
         uint8_t instruction;
         switch (instruction = READ_BYTE()) {
             case OP_CONSTANT: {
-                Value constant = READ_CONSTANT();
+                push(READ_CONSTANT());
                 break;
             }
             case OP_CONSTANT_LONG: {
-                Value c1 = READ_CONSTANT();
-                Value c2 = READ_CONSTANT();
-                Value c3 = READ_CONSTANT();
+                push(READ_CONSTANT());
+                push(READ_CONSTANT());
+                push(READ_CONSTANT());
                 break;
             }
             case OP_RETURN: {
+                printValue(pop());
+                printf("\n");
                 return INTERPRET_OK;
             }
         }
@@ -47,4 +61,14 @@ InterpretResult interpret(Chunk *chunk) {
     // location of current instruction being executed
     vm.ip = vm.chunk->code;
     return run();
+}
+
+void push(Value value) {
+    *vm.stackTop = value;
+    vm.stackTop++;
+}
+
+Value pop() {
+    vm.stackTop--;
+    return *vm.stackTop;
 }
