@@ -1,0 +1,4 @@
+Cannot generate into /Users/seonwoo960000/Desktop/practice/build-own-compiler/research/compiler-example
+It was created with incompatible generator 'Unix Makefiles'
+
+Please either delete it manually or select another generation directory
