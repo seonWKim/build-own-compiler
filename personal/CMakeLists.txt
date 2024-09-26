@@ -5,4 +5,6 @@ project(clox)
 file(GLOB SOURCES "*.c" "*.h")
 
 add_executable(clox ${SOURCES}
-        vm.c)
+        vm.c
+        compiler.h
+        compiler.c)

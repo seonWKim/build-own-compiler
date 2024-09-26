@@ -1,0 +1,3 @@
+/Users/seonwoo960000/Desktop/practice/build-own-compiler/personal/cmake-build-debug/CMakeFiles/clox.dir
+/Users/seonwoo960000/Desktop/practice/build-own-compiler/personal/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/seonwoo960000/Desktop/practice/build-own-compiler/personal/cmake-build-debug/CMakeFiles/rebuild_cache.dir
