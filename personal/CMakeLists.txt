@@ -7,4 +7,5 @@ file(GLOB SOURCES "*.c" "*.h")
 add_executable(clox ${SOURCES}
         vm.c
         compiler.h
-        compiler.c)
+        compiler.c
+        scanner.c)
